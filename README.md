@@ -1,6 +1,6 @@
 # grunt-pg-utils
 
-> JS devel utils to manage PostgreSql Database with grunt file.
+> Grunt tasks for version control on PostgreSql stored procedures, and various utilities.
 
 ## Getting Started
 This plugin requires Grunt `~0.4.1`
@@ -17,73 +17,83 @@ Once the plugin has been installed, it may be enabled inside your Gruntfile with
 grunt.loadNpmTasks('grunt-pg-utils');
 ```
 
-## The "pg_utils" task
+## The "pgutils" task
 
-### Overview
-In your project's Gruntfile, add a section named `pg_utils` to the data object passed into `grunt.initConfig()`.
+### Configuration
 
-```js
-grunt.initConfig({
-  pg_utils: {
-    options: {
-      // Task-specific options go here.
+All the following options are **REQUIRED**.
+
+##### pgutils.connection
+Type: `Object`  
+Default value: `null`
+
+An Object to be passed to ```pg.Client()```, read [node-postgres documentation][pgclientdoc] for possible options.
+
+##### pgutils.src
+Type: `String`  
+Default value: `null`  
+Example: `somedir/*.sql`
+
+Source path for Stored Procedures, used for the restore Task.
+
+##### pgutils.dest
+Type: `String`  
+Default value: `null`  
+Example: `somedir` or `somedir/` or `/complete/url/to/path/`
+
+Destination path for Stored Procedures, used for the backup Task.
+
+##### pgutils.spRegex
+Type: `Regexp`  
+Default value: `null`  
+Example: `somefunc_[aeiou]*`
+
+Regexp used to filter the name of the Stored Procedures, used for the backup Task.
+
+### Example Gruntfile.js
+
+```javascript
+module.exports = function (grunt) {
+
+  // Read different configuration file
+  var developmentConfig = grunt.file.readJSON('development.json')
+    , releaseConfig = grunt.file.readJSON('release.json');
+
+  var testConfig = {
+    pg: {
+      "user": "username",
+      "password": "password",
+      "database": "test",
+      "host": "127.0.0.1"
+    }
+  };
+
+  grunt.initConfig({
+    pgutils: {
+      connection: testConfig.pg,
+      src: 'spsql/*.sql',
+      dest: 'spsql/',
+      spRegex: '^(sp_|fn_).*'
     },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
-  },
-})
-```
+    clean: ['spsql']
+  });
 
-### Options
+  // Load tasks
+  grunt.loadNpmTasks('grunt-pg-utils');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
-#### options.separator
-Type: `String`
-Default value: `',  '`
+  // Default task(s).
+  grunt.registerTask('default', ['clean', 'pgutils:backupSP']);
+  grunt.registerTask('restore', ['pgutils:restoreSP']);
 
-A string value that is used to do something with whatever.
-
-#### options.punctuation
-Type: `String`
-Default value: `'.'`
-
-A string value that is used to do something else with whatever else.
-
-### Usage Examples
-
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
-
-```js
-grunt.initConfig({
-  pg_utils: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-})
-```
-
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
-
-```js
-grunt.initConfig({
-  pg_utils: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-})
+};
 ```
 
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
+We would be happy to accept external contributions, would this be pull requests, issues, or general encouragement.
 
 ## Release History
 _(Nothing yet)_
+
+
+[pgclientdoc]: https://github.com/brianc/node-postgres/wiki/Client#new-client_object_-config--client

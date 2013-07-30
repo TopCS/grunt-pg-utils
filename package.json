@@ -1,6 +1,6 @@
 {
   "name": "grunt-pg-utils",
-  "description": "JS devel utils to manage PostgreSql Database with grunt file",
+  "description": "Grunt tasks for version control on PostgreSql stored procedures, and various utilities.",
   "version": "0.0.1",
   "homepage": "https://github.com/TopCS/grunt-pg-utils",
   "author": {
