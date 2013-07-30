@@ -93,7 +93,7 @@ module.exports = function (grunt) {
 We would be happy to accept external contributions, would this be pull requests, issues, or general encouragement.
 
 ## Release History
-_(Nothing yet)_
-
+ 
+ * 30/07/2013 v0.0.1 Initial release
 
 [pgclientdoc]: https://github.com/brianc/node-postgres/wiki/Client#new-client_object_-config--client
