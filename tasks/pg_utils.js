@@ -8,11 +8,18 @@ module.exports = function (grunt) {
 
   grunt.task.registerTask('backupSP', 'Dump PostgresSQL stored procedures in separated files.', function () {
     var done = this.async()
-      , pgClient = new pg.Client(config.connection)
+      , pgClient = null
       // Success count
       , success = 0
       , query;
 
+    if (this.args.length && !Array.isArray(config.connection)) {
+      grunt.log.error('configuration error: you should setup more that one server if server number is provider to task');
+    }
+
+    var serverConfig = (this.args.length)? config.connection[parseInt(this.args[0])] : config.connection;
+
+    pgClient = new pg.Client(serverConfig);
     // Actually connecting to postgreSQL
     pgClient.connect();
 
@@ -32,7 +39,7 @@ module.exports = function (grunt) {
   grunt.task.registerTask('restoreSP', 'Restore stored procedures.', function () {
     var done = this.async()
       , async = grunt.util.async
-      , pgClient = new pg.Client(config.connection)
+      , pgClient
       // File listing
       , sqlFiles
       , filesIterator = 0
@@ -40,6 +47,14 @@ module.exports = function (grunt) {
       , errors = []
       , success = 0
       , query;
+
+    if (this.args.length && !Array.isArray(config.connection)) {
+      grunt.log.error('configuration error: you should setup more that one server if server number is provider to task');
+    }
+
+    var serverConfig = (this.args.length)? config.connection[parseInt(this.args[0])] : config.connection;
+
+    pgClient = new pg.Client(serverConfig);
 
     // Actually connecting to postgreSQL
     pgClient.connect();

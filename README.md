@@ -81,6 +81,38 @@ module.exports = function (grunt) {
 };
 ```
 
+If you want to use more that one servers you can define the pgutils.connection as an array of object and that call
+the appropriate task with array index, for example:
+
+```js
+  grunt.initConfig({
+    pgutils: {
+      connection: [{
+        "user": "postgres",
+        "password": "postgres",
+        "database": "devel",
+        "host": "127.0.0.1"
+      },
+      {
+        "user": "postgres",
+        "password": "postgres",
+        "database": "production",
+        "host": "127.0.0.1"
+      }],
+      src: 'spsql/*.sql',
+      dest: 'spsql/',
+      spRegex: '^(sp_|fn_).*'
+    },
+    clean: ['spsql']
+  });
+```
+
+Than you can than use:
+```shell
+$ grunt backupSP:0
+$ grunt restoreSP:1
+```
+
 ## Contributing
 We would be happy to accept external contributions, would this be pull requests, issues, or general encouragement.
 
