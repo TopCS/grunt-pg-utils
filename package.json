@@ -1,6 +1,6 @@
 {
   "name": "grunt-pg-utils",
-  "description": "The best Grunt plugin ever.",
+  "description": "JS devel utils to manage PostgreSql Database with grunt file",
   "version": "0.0.1",
   "homepage": "https://github.com/TopCS/grunt-pg-utils",
   "author": {

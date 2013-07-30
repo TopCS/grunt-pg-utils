@@ -1,6 +1,6 @@
 # grunt-pg-utils
 
-> The best Grunt plugin ever.
+> JS devel utils to manage PostgreSql Database with grunt file.
 
 ## Getting Started
 This plugin requires Grunt `~0.4.1`
