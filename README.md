@@ -55,22 +55,14 @@ Regexp used to filter the name of the Stored Procedures, used for the backup Tas
 ```javascript
 module.exports = function (grunt) {
 
-  // Read different configuration file
-  var developmentConfig = grunt.file.readJSON('development.json')
-    , releaseConfig = grunt.file.readJSON('release.json');
-
-  var testConfig = {
-    pg: {
-      "user": "username",
-      "password": "password",
-      "database": "test",
-      "host": "127.0.0.1"
-    }
-  };
-
   grunt.initConfig({
     pgutils: {
-      connection: testConfig.pg,
+      connection: {
+        "user": "postgres",
+        "password": "postgres",
+        "database": "postgres",
+        "host": "127.0.0.1"
+      },
       src: 'spsql/*.sql',
       dest: 'spsql/',
       spRegex: '^(sp_|fn_).*'
