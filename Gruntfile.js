@@ -28,23 +28,20 @@ module.exports = function(grunt) {
     },
 
     // Configuration to be run (and then tested).
-    pg_utils: {
-      default_options: {
-        options: {
-        },
-        files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123'],
-        },
+    pgutils: {
+      // actual db connection
+      connection: {
+        "user": "postgres",
+        "password": "postgres",
+        "database": "postgres",
+        "host": "127.0.0.1"
       },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!',
-        },
-        files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123'],
-        },
-      },
+      // src file that will be restored
+      src: 'spsql/*.sql',
+      // dest path in which save the sp
+      dest: 'spsql/',
+      // sp regex to filter the function by name
+      spRegex: '^(sp_|fn_).*'
     },
 
     // Unit tests.
