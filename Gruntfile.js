@@ -2,7 +2,6 @@
  * grunt-pg-utils
  * https://github.com/TopCS/grunt-pg-utils
  *
- * Copyright (c) 2013 mrgamer
  * Licensed under the MIT license.
  */
 

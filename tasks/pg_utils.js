@@ -1,50 +1,90 @@
-/*
- * grunt-pg-utils
- * https://github.com/TopCS/grunt-pg-utils
- *
- * Copyright (c) 2013 mrgamer
- * Licensed under the MIT license.
- */
+var pg = require('pg');
 
-'use strict';
+module.exports = function (grunt) {
+  var config = grunt.config.get('pgutils')
+    , _ = grunt.util._
+    , log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
 
-module.exports = function(grunt) {
 
-  // Please see the Grunt documentation for more information regarding task
-  // creation: http://gruntjs.com/creating-tasks
+  grunt.task.registerTask('pgutils:backupSP', 'Dump PostgresSQL stored procedures in separated files.', function () {
+    var done = this.async()
+      , pgClient = new pg.Client(config.connection)
+      // Success count
+      , success = 0
+      , query;
 
-  grunt.registerMultiTask('pg_utils', 'Your task description goes here.', function() {
-    // Merge task-specific and/or target-specific options with these defaults.
-    var options = this.options({
-      punctuation: '.',
-      separator: ', '
+    // Actually connecting to postgreSQL
+    pgClient.connect();
+
+    query = pgClient.query("select pg_get_functiondef(sp.oid) as functiondef, sp.proname as proname, sp.pronargs as pronargs from (select oid, proname, pronargs from pg_proc where proname ~ '" + config.spregex + "') as sp");
+    query.on('row', function (row, result) {
+      grunt.file.write(config.dest + '/' + row.proname + '_' + row.pronargs + '.sql', row.functiondef);
+      success++;
     });
 
-    // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
-      // Concat specified files.
-      var src = f.src.filter(function(filepath) {
-        // Warn on and remove invalid source files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
+    query.on('error', grunt.fail.fatal);
+    query.on('end', function () {
+      grunt.log.ok('Correctly backupped ' + success + ' stored procedures.');
+      done();
+    });
+  });
+
+  grunt.task.registerTask('pgutils:restoreSP', 'Restore stored procedures.', function () {
+    var done = this.async()
+      , async = grunt.util.async
+      , pgClient = new pg.Client(config.connection)
+      // File listing
+      , sqlFiles
+      , filesIterator = 0
+      // Error and Success count
+      , errors = []
+      , success = 0
+      , query;
+
+    // Actually connecting to postgreSQL
+    pgClient.connect();
+
+    sqlFiles = grunt.file.expand([config.dest + '/*.sql']);
+
+    async.whilst(
+      function () {
+        return filesIterator < sqlFiles.length;
+      },
+      function (callback) {
+        pgClient.query(grunt.file.read(sqlFiles[filesIterator]), function (err, result) {
+          if (err) {
+            errors.push(err);
+            callback();
+          } else {
+            success++;
+            callback();
+          }
+        });
+        filesIterator++;
+      },
+      function (err) {
+        if (errors.length) {
+          grunt.log.error(errors.length + ' Errors occurred, listing them:');
+          _.forEach(errors, function (value, index) {
+            grunt.log.errorlns(value);
+          });
         }
-      }).map(function(filepath) {
-        // Read file source.
-        return grunt.file.read(filepath);
-      }).join(grunt.util.normalizelf(options.separator));
+        grunt.log.ok('Correctly restored ' + success + ' stored procedures.');
+        done();
+      }
+    );
+  });
 
-      // Handle options.
-      src += options.punctuation;
+  // grunt.task.registerTask('pgutils:testSP', 'PLZ LET ME TEST ALONE', function () {
+  //   var done = this.async()
+  //     , pgClient = new pg.Client(config.connection);
 
-      // Write the destination file.
-      grunt.file.write(f.dest, src);
+  //   query.on('error', grunt.fail.fatal);
+  //   query.on('end', done);
+  // });
 
-      // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
-    });
+  grunt.task.registerTask('pgutils:cleanDir', 'Empties "dest" directory', function () {
+    grunt.file.delete(config.dest);
   });
 
 };
