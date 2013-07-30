@@ -16,7 +16,7 @@ module.exports = function (grunt) {
     // Actually connecting to postgreSQL
     pgClient.connect();
 
-    query = pgClient.query("select pg_get_functiondef(sp.oid) as functiondef, sp.proname as proname, sp.pronargs as pronargs from (select oid, proname, pronargs from pg_proc where proname ~ '" + config.spregex + "') as sp");
+    query = pgClient.query("select pg_get_functiondef(sp.oid) as functiondef, sp.proname as proname, sp.pronargs as pronargs from (select oid, proname, pronargs from pg_proc where proname ~ '" + config.spRegex + "') as sp");
     query.on('row', function (row, result) {
       grunt.file.write(config.dest + '/' + row.proname + '_' + row.pronargs + '.sql', row.functiondef);
       success++;
@@ -44,7 +44,7 @@ module.exports = function (grunt) {
     // Actually connecting to postgreSQL
     pgClient.connect();
 
-    sqlFiles = grunt.file.expand([config.dest + '/*.sql']);
+    sqlFiles = grunt.file.expand(config.src);
 
     async.whilst(
       function () {
