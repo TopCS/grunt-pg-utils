@@ -7,6 +7,10 @@
     "name": "TopCS",
     "url": "https://github.com/TopCS/"
   },
+  "contributors": [
+    "Valerio Coltrè <valerio.coltre@gmail.com>",
+    "Claudio Mignanti <c.mignanti@gmail.com>"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/TopCS/grunt-pg-utils.git"
