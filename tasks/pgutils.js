@@ -82,16 +82,4 @@ module.exports = function (grunt) {
     );
   });
 
-  // grunt.task.registerTask('pgutils:testSP', 'PLZ LET ME TEST ALONE', function () {
-  //   var done = this.async()
-  //     , pgClient = new pg.Client(config.connection);
-
-  //   query.on('error', grunt.fail.fatal);
-  //   query.on('end', done);
-  // });
-
-  grunt.task.registerTask('pgutils:cleanDir', 'Empties "dest" directory', function () {
-    grunt.file.delete(config.dest);
-  });
-
 };
