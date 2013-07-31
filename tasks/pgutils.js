@@ -82,4 +82,31 @@ module.exports = function (grunt) {
     );
   });
 
+  grunt.task.registerTask('runSQL', 'Run SQL commands from file and return results for grunt use', function () {
+    var done = this.async(),
+      pgClient,
+      query,
+      results = [];
+
+    var options = this.options();
+
+    var serverConfig = (this.args.length > 1)? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
+
+    pgClient = new pg.Client(serverConfig);
+    pgClient.connect();
+
+   query = pgClient.query(grunt.file.read(config.sqlDir + this.args[this.args.length - 1] + '.sql'));
+    query.on('row', function (row, result) {
+      results.push(row);
+    });
+
+    query.on('error', grunt.fail.fatal);
+    query.on('end', function () {
+      if (options['results']) {
+        grunt.config(options['results'], results);
+      }
+      done();
+    });
+  });
+
 };

@@ -43,7 +43,11 @@ module.exports = function(grunt) {
       dest: 'spsql/',
       // sp regex to filter the function by name
       spRegex: '^(sp_|fn_).*',
-      dumpFile: 'dumpDB.sql'
+      dumpFile: 'dumpDB.sql',
+      sqlDir: 'sqls/',
+      options: {
+        results: {}
+      }
     },
 
     // Unit tests.
@@ -63,7 +67,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean:', 'backupSP', 'restoreSP']);
+  grunt.registerTask('test', ['clean:', 'backupSP', 'restoreSP', 'runSQL:0:test', 'runSQL:test']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);
