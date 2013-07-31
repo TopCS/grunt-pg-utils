@@ -25,23 +25,25 @@ module.exports = function(grunt) {
     // Before generating any new files, remove any previously-created files.
     clean: {
       tests: ['tmp'],
+      spsql: ['spsql']
     },
 
     // Configuration to be run (and then tested).
     pgutils: {
-      // actual db connection
-      connection: {
+      // array of db connection parameters
+      connections: [{
         "user": "postgres",
         "password": "postgres",
         "database": "postgres",
         "host": "127.0.0.1"
-      },
+      }],
       // src file that will be restored
       src: 'spsql/*.sql',
       // dest path in which save the sp
       dest: 'spsql/',
       // sp regex to filter the function by name
-      spRegex: '^(sp_|fn_).*'
+      spRegex: '^(sp_|fn_).*',
+      dumpFile: 'dumpDB.sql'
     },
 
     // Unit tests.
@@ -61,7 +63,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean:tests', 'restoreSP', 'backupSP']);
+  grunt.registerTask('test', ['clean:', 'backupSP']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);

@@ -23,11 +23,11 @@ grunt.loadNpmTasks('grunt-pg-utils');
 
 All the following options are **REQUIRED**.
 
-##### pgutils.connection
-Type: `Object`  
+##### pgutils.connections
+Type: `Array`
 Default value: `null`
 
-An Object to be passed to ```pg.Client()```, read [node-postgres documentation][pgclientdoc] for possible options.
+An array of Objects to be passed to ```pg.Client()```, read [node-postgres documentation][pgclientdoc] for possible options.
 
 ##### pgutils.src
 Type: `String`  
@@ -57,12 +57,18 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     pgutils: {
-      connection: {
+      connections: [{
         "user": "postgres",
         "password": "postgres",
         "database": "postgres",
         "host": "127.0.0.1"
       },
+      {
+        "user": "postgres",
+        "password": "postgres",
+        "database": "production",
+        "host": "127.0.0.1"
+      }],
       src: 'spsql/*.sql',
       dest: 'spsql/',
       spRegex: '^(sp_|fn_).*'
@@ -81,36 +87,10 @@ module.exports = function (grunt) {
 };
 ```
 
-If you want to use more that one servers you can define the pgutils.connection as an array of object and that call
-the appropriate task with array index, for example:
-
-```js
-  grunt.initConfig({
-    pgutils: {
-      connection: [{
-        "user": "postgres",
-        "password": "postgres",
-        "database": "devel",
-        "host": "127.0.0.1"
-      },
-      {
-        "user": "postgres",
-        "password": "postgres",
-        "database": "production",
-        "host": "127.0.0.1"
-      }],
-      src: 'spsql/*.sql',
-      dest: 'spsql/',
-      spRegex: '^(sp_|fn_).*'
-    },
-    clean: ['spsql']
-  });
-```
-
 Than you can than use:
 ```shell
-$ grunt backupSP:0
-$ grunt restoreSP:1
+$ grunt backupSP    #backup from the db #0
+$ grunt restoreSP:1 #restore to db #1
 ```
 
 ## Contributing

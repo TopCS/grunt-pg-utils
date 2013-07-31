@@ -13,11 +13,7 @@ module.exports = function (grunt) {
       , success = 0
       , query;
 
-    if (this.args.length && !Array.isArray(config.connection)) {
-      grunt.log.error('configuration error: you should setup more that one server if server number is provider to task');
-    }
-
-    var serverConfig = (this.args.length)? config.connection[parseInt(this.args[0])] : config.connection;
+    var serverConfig = (this.args.length)? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
 
     pgClient = new pg.Client(serverConfig);
     // Actually connecting to postgreSQL
@@ -48,11 +44,7 @@ module.exports = function (grunt) {
       , success = 0
       , query;
 
-    if (this.args.length && !Array.isArray(config.connection)) {
-      grunt.log.error('configuration error: you should setup more that one server if server number is provider to task');
-    }
-
-    var serverConfig = (this.args.length)? config.connection[parseInt(this.args[0])] : config.connection;
+    var serverConfig = (this.args.length)? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
 
     pgClient = new pg.Client(serverConfig);
 
