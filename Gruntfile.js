@@ -14,8 +14,7 @@ module.exports = function(grunt) {
     jshint: {
       all: [
         'Gruntfile.js',
-        'tasks/*.js',
-        '<%= nodeunit.tests %>',
+        'tasks/*.js'
       ],
       options: {
         jshintrc: '.jshintrc',
@@ -38,21 +37,16 @@ module.exports = function(grunt) {
         "host": "127.0.0.1"
       }],
       // src file that will be restored
-      src: 'spsql/*.sql',
+      src: 'test/spsql/*.sql',
       // dest path in which save the sp
-      dest: 'spsql/',
+      dest: 'test/spsql/',
       // sp regex to filter the function by name
       spRegex: '^(sp_|fn_).*',
       dumpFile: 'dumpDB.sql',
-      sqlDir: 'sqls/',
+      sqlDir: 'test/sqls/',
       options: {
         results: {}
       }
-    },
-
-    // Unit tests.
-    nodeunit: {
-      tests: ['test/*_test.js'],
     },
 
   });
@@ -63,7 +57,6 @@ module.exports = function(grunt) {
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
