@@ -86,7 +86,8 @@ module.exports = function (grunt) {
     var done = this.async(),
       pgClient,
       query,
-      results = [];
+      results = [],
+      sqlResultsName = config.sqlResultsName || 'results';
 
     var options = this.options();
 
@@ -102,9 +103,7 @@ module.exports = function (grunt) {
 
     query.on('error', grunt.fail.fatal);
     query.on('end', function () {
-      if (options['results']) {
-        grunt.config(options['results'], results);
-      }
+      grunt.config(sqlResultsName, results);
       done();
     });
   });

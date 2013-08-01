@@ -43,10 +43,11 @@ module.exports = function(grunt) {
       // sp regex to filter the function by name
       spRegex: '^(sp_|fn_).*',
       dumpFile: 'dumpDB.sql',
+      // sqlDir to execute single task
       sqlDir: 'test/sqls/',
-      options: {
-        results: {}
-      }
+      // the result name in with save sql stuff default: results
+      sqlResultsName: 'myname'
+
     },
 
   });
@@ -58,9 +59,14 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
 
+  // A test function that print sql results from runSQL task
+  grunt.registerTask('print-results', 'A simple task to print SQL results', function() {
+    grunt.log.writeln(require('util').inspect(grunt.config.get('myname')));
+  });
+
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean:', 'backupSP', 'restoreSP', 'runSQL:0:test', 'runSQL:test']);
+  grunt.registerTask('test', ['clean', 'backupSP', 'restoreSP', 'runSQL:0:test', 'runSQL:test', 'print-results']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);
