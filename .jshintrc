@@ -9,6 +9,5 @@
   "undef": true,
   "boss": true,
   "eqnull": true,
-  "node": true,
-  "laxcomma": true
+  "node": true
 }

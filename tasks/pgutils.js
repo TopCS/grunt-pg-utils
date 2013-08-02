@@ -1,17 +1,17 @@
 var pg = require('pg');
 
 module.exports = function (grunt) {
-  var config = grunt.config.get('pgutils')
-    , _ = grunt.util._
-    , log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
+  var config = grunt.config.get('pgutils'),
+    _ = grunt.util._,
+    log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
 
 
   grunt.task.registerTask('backupSP', 'Dump PostgresSQL stored procedures in separated files.', function () {
-    var done = this.async()
-      , pgClient = null
+    var done = this.async(),
+      pgClient = null,
       // Success count
-      , success = 0
-      , query;
+      success = 0,
+      query;
 
     var serverConfig = (this.args.length)? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
 
@@ -33,16 +33,16 @@ module.exports = function (grunt) {
   });
 
   grunt.task.registerTask('restoreSP', 'Restore stored procedures.', function () {
-    var done = this.async()
-      , async = grunt.util.async
-      , pgClient
+    var done = this.async(),
+      async = grunt.util.async,
+      pgClient,
       // File listing
-      , sqlFiles
-      , filesIterator = 0
+      sqlFiles,
+      filesIterator = 0,
       // Error and Success count
-      , errors = []
-      , success = 0
-      , query;
+      errors = [],
+      success = 0,
+      query;
 
     var serverConfig = (this.args.length)? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
 
