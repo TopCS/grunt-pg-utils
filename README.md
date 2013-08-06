@@ -97,7 +97,11 @@ $ grunt restore-sp:1 #restore to db #1
 We would be happy to accept external contributions, would this be pull requests, issues, or general encouragement.
 
 ## Release History
- 
+
+ * 06/08/2013 v0.0.2 Progress release
+                - Implement a task to run SQL files
+                - Add multiple servers ability
+                - Include tests
  * 30/07/2013 v0.0.1 Initial release
 
 [pgclientdoc]: https://github.com/brianc/node-postgres/wiki/Client#new-client_object_-config--client
