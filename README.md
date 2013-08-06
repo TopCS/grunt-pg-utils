@@ -81,16 +81,16 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
 
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'pgutils:backupSP']);
-  grunt.registerTask('restore', ['pgutils:restoreSP']);
+  grunt.registerTask('default', ['clean', 'pgutils:backup-sp']);
+  grunt.registerTask('restore', ['pgutils:restore-sp']);
 
 };
 ```
 
 Than you can than use:
 ```shell
-$ grunt backupSP    #backup from the db #0
-$ grunt restoreSP:1 #restore to db #1
+$ grunt backup-sp    #backup from the db #0
+$ grunt restore-sp:1 #restore to db #1
 ```
 
 ## Contributing

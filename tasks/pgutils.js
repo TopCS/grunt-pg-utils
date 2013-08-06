@@ -6,7 +6,7 @@ module.exports = function (grunt) {
     log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
 
 
-  grunt.task.registerTask('backupSP', 'Dump PostgresSQL stored procedures in separated files.', function () {
+  grunt.task.registerTask('backup-sp', 'Dump PostgresSQL stored procedures in separated files.', function () {
     var done = this.async(),
       pgClient = null,
       // Success count
@@ -32,7 +32,7 @@ module.exports = function (grunt) {
     });
   });
 
-  grunt.task.registerTask('restoreSP', 'Restore stored procedures.', function () {
+  grunt.task.registerTask('restore-sp', 'Restore stored procedures.', function () {
     var done = this.async(),
       async = grunt.util.async,
       pgClient,
@@ -82,7 +82,7 @@ module.exports = function (grunt) {
     );
   });
 
-  grunt.task.registerTask('runSQL', 'Run SQL commands from file and return results for grunt use', function () {
+  grunt.task.registerTask('run-sql', 'Run SQL commands from file and return results for grunt use', function () {
     var done = this.async(),
       pgClient,
       query,
