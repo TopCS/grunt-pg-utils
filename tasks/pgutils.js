@@ -13,6 +13,7 @@ module.exports = function (grunt) {
       success = 0,
       query;
 
+    config.dest = config.dest || 'spsql/';
     var serverConfig = (this.args.length)? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
 
     pgClient = new pg.Client(serverConfig);
@@ -44,6 +45,7 @@ module.exports = function (grunt) {
       success = 0,
       query;
 
+    config.src = config.src || 'spsql/*.js';
     var serverConfig = (this.args.length)? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
 
     pgClient = new pg.Client(serverConfig);
@@ -86,12 +88,13 @@ module.exports = function (grunt) {
     var done = this.async(),
       pgClient,
       query,
-      results = [],
-      sqlResultsName = config.sqlResultsName || 'results';
+      results = [];
 
+    config.sqlDir = config.sqlDir || 'sqls/';
+    var sqlResultsName = config.sqlResultsName || 'results';
+    var serverConfig = (this.args.length > 1)? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
     var options = this.options();
 
-    var serverConfig = (this.args.length > 1)? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
 
     pgClient = new pg.Client(serverConfig);
     pgClient.connect();
