@@ -5,7 +5,6 @@ module.exports = function (grunt) {
     _ = grunt.util._,
     log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
 
-
   grunt.task.registerTask('backup-sp', 'Dump PostgresSQL stored procedures in separated files.', function () {
     var done = this.async(),
       pgClient = null,
@@ -92,14 +91,14 @@ module.exports = function (grunt) {
 
     config.sqlDir = config.sqlDir || 'sqls/';
     var sqlResultsName = config.sqlResultsName || 'results';
-    var serverConfig = (this.args.length > 1)? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
+    var serverConfig = (this.args.length > 1) ? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
     var options = this.options();
 
 
     pgClient = new pg.Client(serverConfig);
     pgClient.connect();
 
-   query = pgClient.query(grunt.file.read(config.sqlDir + this.args[this.args.length - 1] + '.sql'));
+    query = pgClient.query(grunt.file.read(config.sqlDir + this.args[this.args.length - 1] + '.sql'));
     query.on('row', function (row, result) {
       results.push(row);
     });
