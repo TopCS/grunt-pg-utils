@@ -96,6 +96,29 @@ $ grunt restore-sp:1 #restore to db #1
 ## Contributing
 We would be happy to accept external contributions, would this be pull requests, issues, or general encouragement.
 
+### Developer environment
+Requirements:
+
+  * Postgres 9.x installation
+  * Empty database to run tests
+  * Configure such database in [`Gruntfile.js`][gruntfile]
+
+
+`Gruntfile.js` section to edit
+```
+  pgutils: {
+    // array of db connection parameters
+    connections: [{
+      "user": "postgres",
+      "password": "postgres",
+      "database": "postgres",
+      "host": "127.0.0.1"
+    }]
+  }
+```
+
+  * Run tests: `grunt test`
+
 ## Release History
 
  * 06/08/2013 v0.0.2 Progress release
@@ -105,3 +128,4 @@ We would be happy to accept external contributions, would this be pull requests,
  * 30/07/2013 v0.0.1 Initial release
 
 [pgclientdoc]: https://github.com/brianc/node-postgres/wiki/Client#new-client_object_-config--client
+[gruntfile]: Gruntfile.js
