@@ -28,28 +28,55 @@ module.exports = function(grunt) {
     },
 
     // Configuration to be run (and then tested).
-    pgutils: {
-      // array of db connection parameters
-      connections: [{
-        "user": "postgres",
-        "password": "postgres",
-        "database": "postgres",
-        "host": "127.0.0.1"
-      }],
-      // src file that will be restored
-      src: 'test/spsql/*.sql',
-      // dest path in which save the sp
-      dest: 'test/spsql/',
-      // sp regex to filter the function by name
-      spRegex: '^(sp_|fn_).*',
-      dumpFile: 'dumpDB.sql',
-      // sqlDir to execute single task
-      sqlDir: 'test/sqls/',
-      // the result name in with save sql stuff default: results
-      sqlResultsName: 'myname'
-
+    'backup-sp': {
+      stage: {
+        options: {
+          connection: {
+            "user": "postgres",
+            "password": "postgres",
+            "database": "postgres",
+            "host": "127.0.0.1"
+          },
+          // dest path in which save the sp
+          dest: 'test/spsql/',
+          // sp regex to filter the function by name
+          spRegex: '^(sp_|fn_).*',
+        }
+      }
     },
-
+    'restore-sp': {
+      stage: {
+        options: {
+          connections: {
+            "user": "postgres",
+            "password": "postgres",
+            "database": "postgres",
+            "host": "127.0.0.1"
+          },
+          // src file that will be restored
+          src: 'test/spsql/*.sql',
+        }
+      }
+    },
+    'run-sql':{
+      test: {
+        connections: {
+          "user": "postgres",
+          "password": "postgres",
+          "database": "postgres",
+          "host": "127.0.0.1"
+        },
+        sqlDir: 'test/sqls/',
+        // the result name in with save sql stuff default: results
+        sqlResultsName: 'myname'
+      }
+    },
+    /*'dump': {
+      ...
+    },
+    'restore': {
+  
+    }*/
   });
 
   // Actually load this plugin's task(s).
