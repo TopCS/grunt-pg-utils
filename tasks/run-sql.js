@@ -18,16 +18,16 @@ module.exports = function (grunt) {
       query,
       results = [];
 
-    config.sqlDir = config.sqlDir || 'sqls/';
-    var sqlResultsName = config.sqlResultsName || 'results';
-    var serverConfig = (this.args.length > 1) ? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
-    var options = this.options();
+    var options = this.options({
+      connection: {},
+      sqlDir: 'sqls/',
+      sqlResultsName: 'results',
+    });
 
-
-    pgClient = new pg.Client(serverConfig);
+    pgClient = new pg.Client(options.connection);
     pgClient.connect();
 
-    query = pgClient.query(grunt.file.read(config.sqlDir + this.args[this.args.length - 1] + '.sql'));
+    query = pgClient.query(grunt.file.read(options.sqlDir + /* idea needed here */ this.args[this.args.length - 1] + '.sql'));
     query.on('row', function (row, result) {
       results.push(row);
     });

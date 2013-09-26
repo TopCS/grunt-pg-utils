@@ -47,7 +47,7 @@ module.exports = function(grunt) {
     'restore-sp': {
       stage: {
         options: {
-          connections: {
+          connection: {
             "user": "postgres",
             "password": "postgres",
             "database": "postgres",
@@ -93,7 +93,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'backup-sp', 'restore-sp', 'run-sql:0:test', 'run-sql:test', 'print-results']);
+  grunt.registerTask('test', ['clean', 'backup-sp', 'restore-sp', 'run-sql:test', 'print-results']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);

@@ -23,15 +23,18 @@ module.exports = function (grunt) {
       success = 0,
       query;
 
-    var serverConfig = (this.args.length) ? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
-    config.src = config.src || 'spsql/*.js';
+    var options = this.options({
+      connection: {},
+      sqlDir: 'sqls/',
+      src: 'spsql/*.js',
+    });
 
-    pgClient = new pg.Client(serverConfig);
+    pgClient = new pg.Client(options.connection);
 
     // Actually connecting to postgreSQL
     pgClient.connect();
 
-    sqlFiles = grunt.file.expand(config.src);
+    sqlFiles = grunt.file.expand(options.src);
 
     async.whilst(
       function () {
@@ -60,33 +63,6 @@ module.exports = function (grunt) {
         done();
       }
     );
-  });
-
-  grunt.task.registerTask('run-sql', 'Run SQL commands from file and return results for grunt use', function () {
-    var done = this.async(),
-      pgClient,
-      query,
-      results = [];
-
-    config.sqlDir = config.sqlDir || 'sqls/';
-    var sqlResultsName = config.sqlResultsName || 'results';
-    var serverConfig = (this.args.length > 1) ? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
-    var options = this.options();
-
-
-    pgClient = new pg.Client(serverConfig);
-    pgClient.connect();
-
-    query = pgClient.query(grunt.file.read(config.sqlDir + this.args[this.args.length - 1] + '.sql'));
-    query.on('row', function (row, result) {
-      results.push(row);
-    });
-
-    query.on('error', grunt.fail.fatal);
-    query.on('end', function () {
-      grunt.config(sqlResultsName, results);
-      done();
-    });
   });
 
 };

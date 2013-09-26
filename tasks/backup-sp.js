@@ -19,8 +19,12 @@ module.exports = function (grunt) {
       listSPsql,
       listSP;
 
-    var serverConfig = (this.args.length)? config.connections[parseInt(this.args[0], 10)] : config.connections[0];
-    config.dest = config.dest || 'spsql/';
+    var options = this.options({
+      connection: {},
+      spRegex: '^(sp_|fn_).*',
+      dest: 'spsql/'
+    });
+
     listSPsql = "select " +
       "sp.proname as fname, " +
       "n.nspname as nspace, " +
@@ -31,9 +35,9 @@ module.exports = function (grunt) {
       "ds.description as fdesc from " +
       "pg_proc as sp LEFT OUTER JOIN pg_description ds ON ds.objoid = sp.oid " +
         "INNER JOIN pg_namespace n ON sp.pronamespace = n.oid " +
-        "WHERE sp.proname ~ '" + config.spRegex + "'";
+        "WHERE sp.proname ~ '" + options.spRegex + "'";
 
-    pgClient = new pg.Client(serverConfig);
+    pgClient = new pg.Client(options.connection);
     // Actually connecting to postgreSQL
     pgClient.connect();
 
@@ -50,7 +54,7 @@ module.exports = function (grunt) {
           "IS '{{fdesc}}'").template(sp);
       }
 
-      grunt.file.write(config.dest + filename, filecontent);
+      grunt.file.write(options.dest + filename, filecontent);
       success++;
     });
 
