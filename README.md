@@ -18,6 +18,32 @@ grunt.loadNpmTasks('grunt-pg-utils');
 ```
 
 ## The "pgutils" task
+  
+### Overview
+Overview here.
+
+### Options
+
+##### pgutils.connections
+Type: `Array` **REQUIRED**
+
+An array of Objects to be passed to ```pg.Client()```, read [node-postgres documentation][pgclientdoc] for possible options.
+  
+##### pgutils.src
+Type: `String` **REQUIRED**  
+Example: `somedir/*.sql`
+
+Source path for Stored Procedures, used for the restore Task.
+  
+##### pgutils.dest
+Type: `String` **REQUIRED**  
+Example: `somedir` or `somedir/` or `/complete/url/to/path/`
+
+Destination path for Stored Procedures, used for the backup Task.
+  
+##### pgutils.spRegex
+Type: `Regexp` **REQUIRED**  
+Example: `somefunc_[aeiou]*`
 
 ### Configuration
 
