@@ -34,7 +34,8 @@
   "dependencies": {
     "grunt": "~0.4.1",
     "pg": "latest",
-    "string": "latest"
+    "string": "latest",
+    "async": "latest"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.6.0",

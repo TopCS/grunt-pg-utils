@@ -6,9 +6,7 @@ var pg = require('pg'),
     S = require('string');
 
 module.exports = function (grunt) {
-  var config = grunt.config.get('pgutils'),
-    _ = grunt.util._,
-    log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
+  var log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
 
   grunt.task.registerMultiTask('backup-sp', 'Dump PostgresSQL stored procedures in separated files.', function () {
     var done = this.async(),
@@ -22,7 +20,8 @@ module.exports = function (grunt) {
     var options = this.options({
       connection: {},
       spRegex: '^(sp_|fn_).*',
-      dest: 'spsql/'
+      dest: 'spsql/',
+      filenameFormat: '{{fname}}-N{{fargs}}.sql'
     });
 
     listSPsql = "select " +
@@ -47,7 +46,7 @@ module.exports = function (grunt) {
           filecontent,
           spcomment;
 
-      filename = S('{{fname}} - {{fargs}}args ({{fargv}})' + '.sql').template(sp);
+      filename = S(options.filenameFormat).template(sp);
       filecontent = S("{{fdef}};\n").template(sp);
       if (sp.fdesc) {
         filecontent += S("COMMENT ON FUNCTION {{nspace}}.{{fname}}({{fargdesc}})\n" +

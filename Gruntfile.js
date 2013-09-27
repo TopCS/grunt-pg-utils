@@ -56,20 +56,32 @@ module.exports = function(grunt) {
           // src file that will be restored
           src: 'test/spsql/*.sql',
         }
-      }
+      },
+      production: {
+        options: {
+          connection: {
+            "user": "postgres",
+            "password": "postgres",
+            "database": "production",
+            "host": "127.0.0.1"
+          },
+          // src file that will be restored
+          src: 'test/spsql/*.sql',
+        }
+      },
     },
     'run-sql':{
       test: {
-        connections: {
-          "user": "postgres",
-          "password": "postgres",
-          "database": "postgres",
-          "host": "127.0.0.1"
-        },
-        sqlDir: 'test/sqls/',
-        // the result name in with save sql stuff default: results
-        sqlResultsName: 'myname'
-      }
+        options: {
+          connections: {
+            "user": "postgres",
+            "password": "postgres",
+            "database": "postgres",
+            "host": "127.0.0.1"
+          },
+          src: ['spsql/*.sql'],
+        }
+      },
     },
     /*'dump': {
       ...
@@ -93,7 +105,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'backup-sp', 'restore-sp', 'run-sql:test', 'print-results']);
+  grunt.registerTask('test', ['clean', 'backup-sp', 'restore-sp:stage', 'run-sql:test', 'print-results']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);

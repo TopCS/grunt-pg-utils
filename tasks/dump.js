@@ -7,9 +7,7 @@ var pg = require('pg'),
     S = require('string');
 
 module.exports = function (grunt) {
-  var config = grunt.config.get('pgutils'),
-    _ = grunt.util._,
-    log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
+  var log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
 
 
   grunt.task.registerTask('dump', 'Dump a database using pg_dump in your system', function () {
