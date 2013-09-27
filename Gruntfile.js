@@ -8,6 +8,28 @@
 'use strict';
 
 module.exports = function(grunt) {
+  var defUser = 'postgres',
+      defPassword = 'postgres',
+      defHost = '127.0.0.1';
+
+  var stageConnection = {
+    user: defUser,
+    password: defPassword,
+    database: 'teststage',
+    host: defHost
+  },
+  developmentConnection = {
+    user: defUser,
+    password: defPassword,
+    database: 'testdevel',
+    host: defHost
+  },
+  productionConnection = {
+    user: defUser,
+    password: defPassword,
+    database: 'testprodu',
+    host: defHost
+  };
 
   // Project configuration.
   grunt.initConfig({
@@ -51,12 +73,7 @@ module.exports = function(grunt) {
         // dest path in which save the sp
         dest: 'test/spsql/development',
         options: {
-          connection: {
-            user: 'postgres',
-            password: 'postgres',
-            database: 'testdevel',
-            host: '127.0.0.1'
-          },
+          connection: developmentConnection,
           // SP regex to filter the function by name
           spRegex: '^(sp_|fn_).*'
         }
@@ -65,12 +82,7 @@ module.exports = function(grunt) {
         // dest path in which save the sp
         dest: 'test/spsql/development',
         options: {
-          connection: {
-            user: 'postgres',
-            password: 'postgres',
-            database: 'teststage',
-            host: '127.0.0.1'
-          },
+          connection: stageConnection,
           // SP regex to filter the function by name
           spRegex: '^(sp_|fn_).*'
         }
@@ -100,11 +112,17 @@ module.exports = function(grunt) {
           }
         }
       }
-    },
-    'run-sql': {
+    }
+/*    'run-sql': {
+      'create-db': {
+        src: 'test/sqls/create-db.sql',
+        options: {
+
+        }
+      }
       test: {
         options: {
-          connections: {
+          connection: {
             'user': 'postgres',
             'password': 'postgres',
             'database': 'postgres',
@@ -113,7 +131,7 @@ module.exports = function(grunt) {
           src: ['spsql/*.sql']
         }
       }
-    },
+    },*/
     /*'dump': {
       ...
     },
@@ -124,6 +142,7 @@ module.exports = function(grunt) {
 
   // Actually load this plugin's task(s).
   grunt.loadTasks('tasks');
+  grunt.loadTasks('test');
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -136,7 +155,7 @@ module.exports = function(grunt) {
 
   // Whenever the 'test' task is run, first clean the 'tmp' dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'backup-sp', 'restore-sp:stage', 'run-sql:test', 'print-results']);
+  // grunt.registerTask('test', ['clean', 'backup-sp', 'restore-sp:stage', 'run-sql:test', 'print-results']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);
