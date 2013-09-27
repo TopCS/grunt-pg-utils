@@ -1,5 +1,3 @@
-// Internal Libs
-var path = require('path');
 // External Deps
 var pg = require('pg'),
     async = require('async'),
@@ -8,7 +6,7 @@ var pg = require('pg'),
 var log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
 
 module.exports = function (grunt) {
-  grunt.task.registerMultiTask('restore-sp', 'Restore stored procedures.', function () {
+  grunt.registerMultiTask('restore-sp', 'Restore stored procedures.', function () {
     var done = this.async(),
       pgClient,
       // Error and Success count

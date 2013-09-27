@@ -8,7 +8,7 @@ var pg = require('pg'),
 var log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
 
 module.exports = function (grunt) {
-  grunt.task.registerMultiTask('backup-sp', 'Dump PostgresSQL stored procedures in separated files.', function () {
+  grunt.registerMultiTask('backup-sp', 'Dump PostgresSQL stored procedures in separated files.', function () {
     var done = this.async(),
       pgClient,
       // Success count
