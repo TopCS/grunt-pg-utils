@@ -1,66 +1,70 @@
-
 // Internal Libs
 var path = require('path');
 // External Deps
 var pg = require('pg'),
-    cp = require('child_process'),
+    async = require('async'),
     S = require('string');
+// Debugging dirtyness
+var log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
 
 module.exports = function (grunt) {
-  var log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
-
   grunt.task.registerMultiTask('restore-sp', 'Restore stored procedures.', function () {
     var done = this.async(),
-      async = grunt.util.async,
       pgClient,
-      // File listing
-      sqlFiles,
-      filesIterator = 0,
       // Error and Success count
       errors = [],
       success = 0,
-      query;
+      sourceArray = this.filesSrc;
 
-    var options = this.options({
-      connection: {},
-      sqlDir: 'sqls/',
-      src: 'spsql/*.js',
-    });
+    var options = this.options();
+    if (!options.connection) {
+      grunt.fatal(S('connection must be specified for {{name}} task').template({ name: this.name }));
+    }
 
     pgClient = new pg.Client(options.connection);
-
-    // Actually connecting to postgreSQL
-    pgClient.connect();
-
-    sqlFiles = grunt.file.expand(options.src);
-
-    async.whilst(
-      function () {
-        return filesIterator < sqlFiles.length;
+    async.waterfall([
+      function connect(callback) {
+        pgClient.connect(callback);
       },
-      function (callback) {
-        pgClient.query(grunt.file.read(sqlFiles[filesIterator]), function (err, result) {
-          if (err) {
-            errors.push(err);
-            callback();
+      function putStoredProcedures(pgInstance, callback) {
+        // Create an array containing all the code in the stored procedures.
+        var spArray = sourceArray.filter(function (sourceFile) {
+          // Double-check for nonexistent files
+          if (!grunt.file.exists(sourceFile)) {
+            grunt.log.warn(S('Source file {{path}} not found.').template({ path: sourceFile }));
+            return false;
           } else {
-            success++;
-            callback();
+            return true;
           }
+        }).map(function (sourceFile) {
+          return grunt.file.read(sourceFile);
         });
-        filesIterator++;
-      },
-      function (err) {
-        if (errors.length) {
-          grunt.log.error(errors.length + ' Errors occurred, listing them:');
-          _.forEach(errors, function (value, index) {
-            grunt.log.errorlns(value);
-          });
-        }
-        grunt.log.ok('Correctly restored ' + success + ' stored procedures.');
-        done();
-      }
-    );
-  });
 
+        // Execute the restore
+        async.eachSeries(spArray, function (sp, spCallback) {
+          pgInstance.query(sp, function (err, pgResponse) {
+            if (err) {
+              errors.push(err);
+            } else {
+              success++;
+            }
+            spCallback();
+          });
+        }, callback);
+      }
+    ],
+    function (err) {
+      if (err) {
+        return grunt.fatal(err);
+      }
+      if (errors.length) {
+        grunt.log.error(S('{{howmany}} Errors occurred, listing them:').template({ howmany: errors.length }));
+        errors.forEach(function (error, index) {
+          grunt.log.errorlns(S('{{index}}) error: {{error}}').template({ index: index, error: error }));
+        });
+      }
+      grunt.log.ok(S('Correctly restored {{howmany}} stored procedures.').template({ howmany: success }));
+      done();
+    });
+  });
 };
