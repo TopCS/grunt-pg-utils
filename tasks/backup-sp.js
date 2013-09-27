@@ -21,16 +21,17 @@ module.exports = function (grunt) {
     var options = this.options({
       filenameFormat: '{{fname}}-N{{fargs}}.sql'
     });
-
     // Check configuration, i don't trust the user.
     if (!options.spRegex) {
       grunt.fatal(S('spRegex must be specified for {{name}} task').template({ name: this.name }));
     } else if (!options.connection) {
       grunt.fatal(S('connection must be specified for {{name}} task').template({ name: this.name }));
     } else if (this.files.length !== 1 || typeof this.files[0].dest  !== 'string') {
-      // MKDIR HERE
       grunt.fatal(S('{{name}} task requires only one destination folder').template({ name: this.name }));
     }
+    // Create destination dir, it *MUST* be a directory.
+    destinationPath = this.files[0].dest;
+    grunt.file.mkdir(destinationPath);
 
     listSPsql = "select " +
       "sp.proname as fname, " +
@@ -43,10 +44,8 @@ module.exports = function (grunt) {
       "pg_proc as sp LEFT OUTER JOIN pg_description ds ON ds.objoid = sp.oid " +
         "INNER JOIN pg_namespace n ON sp.pronamespace = n.oid " +
         "WHERE sp.proname ~ '" + options.spRegex + "'";
-    destinationPath = this.files[0].dest;
 
     pgClient = new pg.Client(options.connection);
-    // Actually connecting to postgreSQL
     async.waterfall([
       function connect(callback) {
         pgClient.connect(callback);
