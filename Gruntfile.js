@@ -27,16 +27,48 @@ module.exports = function(grunt) {
       spsql: ['spsql']
     },
 
+    /**
+     * Demo:
+     *
+     * 0) run-sql:create-db 
+     *   Creates testdevel
+     *   Creates teststage
+     *   Creates testprodu
+     *
+     * 1) dump SP from testdevel to test/spsql/development
+     * 2) restore SP from test/spsql/development to teststage
+     * 3) restore SP from test/spsql/development to testprodu
+     * 4) run-sql:delete-db
+     *   Deletes testdevel
+     *   Deletes teststage
+     *   Deletes testprodu
+     * 
+     */
+
     // Configuration to be run (and then tested).
     'backup-sp': {
-      stage: {
+      development: {
         // dest path in which save the sp
-        dest: 'test/spsql/',
+        dest: 'test/spsql/development',
         options: {
           connection: {
             user: 'postgres',
             password: 'postgres',
-            database: 'postgres',
+            database: 'testdevel',
+            host: '127.0.0.1'
+          },
+          // SP regex to filter the function by name
+          spRegex: '^(sp_|fn_).*'
+        }
+      },
+      stage: {
+        // dest path in which save the sp
+        dest: 'test/spsql/development',
+        options: {
+          connection: {
+            user: 'postgres',
+            password: 'postgres',
+            database: 'teststage',
             host: '127.0.0.1'
           },
           // SP regex to filter the function by name
