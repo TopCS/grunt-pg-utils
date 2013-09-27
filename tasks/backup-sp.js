@@ -2,27 +2,35 @@
 var path = require('path');
 // External Deps
 var pg = require('pg'),
-    cp = require('child_process'),
+    async = require('async'),
     S = require('string');
+// Debugging dirtyness
+var log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
 
 module.exports = function (grunt) {
-  var log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
-
   grunt.task.registerMultiTask('backup-sp', 'Dump PostgresSQL stored procedures in separated files.', function () {
     var done = this.async(),
-      pgClient = null,
+      pgClient,
       // Success count
       success = 0,
       // query
       listSPsql,
-      listSP;
+      listSP,
+      destinationPath;
 
     var options = this.options({
-      connection: {},
-      spRegex: '^(sp_|fn_).*',
-      dest: 'spsql/',
       filenameFormat: '{{fname}}-N{{fargs}}.sql'
     });
+
+    // Check configuration, i don't trust the user.
+    if (!options.spRegex) {
+      grunt.fatal(S('spRegex must be specified for {{name}} task').template({ name: this.name }));
+    } else if (!options.connection) {
+      grunt.fatal(S('connection must be specified for {{name}} task').template({ name: this.name }));
+    } else if (this.files.length !== 1 || typeof this.files[0].dest  !== 'string') {
+      // MKDIR HERE
+      grunt.fatal(S('{{name}} task requires only one destination folder').template({ name: this.name }));
+    }
 
     listSPsql = "select " +
       "sp.proname as fname, " +
@@ -35,33 +43,44 @@ module.exports = function (grunt) {
       "pg_proc as sp LEFT OUTER JOIN pg_description ds ON ds.objoid = sp.oid " +
         "INNER JOIN pg_namespace n ON sp.pronamespace = n.oid " +
         "WHERE sp.proname ~ '" + options.spRegex + "'";
+    destinationPath = this.files[0].dest;
 
     pgClient = new pg.Client(options.connection);
     // Actually connecting to postgreSQL
-    pgClient.connect();
+    async.waterfall([
+      function connect(callback) {
+        pgClient.connect(callback);
+      },
+      function getStoredProcedures(pgInstance, callback) {
+        listSP = pgInstance.query(listSPsql);
+        listSP.on('row', function (sp, result) {
+          var filename,
+              filecontent;
 
-    listSP = pgClient.query(listSPsql);
-    listSP.on('row', function (sp, result) {
-      var filename,
-          filecontent,
-          spcomment;
+          // Compile filename format
+          filename = S(options.filenameFormat).template(sp);
+          // Fill the file content
+          filecontent = S("{{fdef}};\n").template(sp);
+          // In case the SP has some description, add to the file content.
+          if (sp.fdesc) {
+            filecontent += S("COMMENT ON FUNCTION {{nspace}}.{{fname}}({{fargdesc}})\n" +
+              "IS '{{fdesc}}'").template(sp);
+          }
 
-      filename = S(options.filenameFormat).template(sp);
-      filecontent = S("{{fdef}};\n").template(sp);
-      if (sp.fdesc) {
-        filecontent += S("COMMENT ON FUNCTION {{nspace}}.{{fname}}({{fargdesc}})\n" +
-          "IS '{{fdesc}}'").template(sp);
+          grunt.file.write(path.join(destinationPath, filename.toString()), filecontent);
+          success++;
+        });
+
+        listSP.on('error', callback);
+        listSP.on('end', callback.bind(this, null));
       }
-
-      grunt.file.write(options.dest + filename, filecontent);
-      success++;
-    });
-
-    listSP.on('error', grunt.fail.fatal);
-    listSP.on('end', function () {
-      grunt.log.ok('Correctly backupped ' + success + ' stored procedures.');
+    ],
+    function (err) {
+      if (err) {
+        return grunt.fatal(err);
+      }
+      grunt.log.ok(S('Correctly backupped {{howmany}} stored procedures.').template({ howmany: success }));
       done();
     });
   });
-
 };

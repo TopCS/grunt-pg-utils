@@ -17,8 +17,8 @@ module.exports = function(grunt) {
         'tasks/*.js'
       ],
       options: {
-        jshintrc: '.jshintrc',
-      },
+        jshintrc: '.jshintrc'
+      }
     },
 
     // Before generating any new files, remove any previously-created files.
@@ -30,58 +30,57 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     'backup-sp': {
       stage: {
+        // dest path in which save the sp
+        dest: 'test/spsql/',
         options: {
           connection: {
-            "user": "postgres",
-            "password": "postgres",
-            "database": "postgres",
-            "host": "127.0.0.1"
+            user: 'postgres',
+            password: 'postgres',
+            database: 'postgres',
+            host: '127.0.0.1'
           },
-          // dest path in which save the sp
-          dest: 'test/spsql/',
-          // sp regex to filter the function by name
-          spRegex: '^(sp_|fn_).*',
+          // SP regex to filter the function by name
+          spRegex: '^(sp_|fn_).*'
         }
       }
     },
     'restore-sp': {
       stage: {
+        // src file that will be restored
+        src: ['test/spsql/*.sql'],
         options: {
           connection: {
-            "user": "postgres",
-            "password": "postgres",
-            "database": "postgres",
-            "host": "127.0.0.1"
-          },
-          // src file that will be restored
-          src: 'test/spsql/*.sql',
+            'user': 'postgres',
+            'password': 'postgres',
+            'database': 'postgres',
+            'host': '127.0.0.1'
+          }
         }
       },
       production: {
+        src: ['test/spsql/*.sql'],
         options: {
           connection: {
-            "user": "postgres",
-            "password": "postgres",
-            "database": "production",
-            "host": "127.0.0.1"
-          },
-          // src file that will be restored
-          src: 'test/spsql/*.sql',
+            'user': 'postgres',
+            'password': 'postgres',
+            'database': 'production',
+            'host': '127.0.0.1'
+          }
         }
-      },
+      }
     },
-    'run-sql':{
+    'run-sql': {
       test: {
         options: {
           connections: {
-            "user": "postgres",
-            "password": "postgres",
-            "database": "postgres",
-            "host": "127.0.0.1"
+            'user': 'postgres',
+            'password': 'postgres',
+            'database': 'postgres',
+            'host': '127.0.0.1'
           },
-          src: ['spsql/*.sql'],
+          src: ['spsql/*.sql']
         }
-      },
+      }
     },
     /*'dump': {
       ...
@@ -103,7 +102,7 @@ module.exports = function(grunt) {
     grunt.log.writeln(require('util').inspect(grunt.config.get('myname')));
   });
 
-  // Whenever the "test" task is run, first clean the "tmp" dir, then run this
+  // Whenever the 'test' task is run, first clean the 'tmp' dir, then run this
   // plugin's task(s), then test the result.
   grunt.registerTask('test', ['clean', 'backup-sp', 'restore-sp:stage', 'run-sql:test', 'print-results']);
 
