@@ -132,32 +132,20 @@ module.exports = function(grunt) {
           connection: developmentConnection
         }
       }
-    }
-/*    'run-sql': {
-      'create-db': {
-        src: 'test/sqls/create-db.sql',
-        options: {
-
-        }
-      }
-      test: {
+    },
+    'run-sql': {
+      testSP: {
+        src: ['test/sqls/*.sql'],
         options: {
           connection: {
-            'user': 'postgres',
-            'password': 'postgres',
-            'database': 'postgres',
-            'host': '127.0.0.1'
-          },
-          src: ['spsql/*.sql']
+            user: 'postgres',
+            password: 'postgres',
+            host: '127.0.0.1',
+            port: 5432
+          }
         }
       }
-    },*/
-    /*'dump': {
-      ...
-    },
-    'restore': {
-  
-    }*/
+    }
   });
 
   // Actually load this plugin's task(s).
