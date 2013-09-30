@@ -10,25 +10,29 @@
 module.exports = function(grunt) {
   var defUser = 'postgres',
       defPassword = 'postgres',
-      defHost = '127.0.0.1';
+      defHost = '127.0.0.1',
+      defPort = 5432;
 
   var stageConnection = {
     user: defUser,
     password: defPassword,
     database: 'teststage',
-    host: defHost
+    host: defHost,
+    port: defPort
   },
   developmentConnection = {
     user: defUser,
     password: defPassword,
     database: 'testdevel',
-    host: defHost
+    host: defHost,
+    port: defPort
   },
   productionConnection = {
     user: defUser,
     password: defPassword,
     database: 'testprodu',
-    host: defHost
+    host: defHost,
+    port: defPort
   };
 
   // Project configuration.
@@ -110,6 +114,22 @@ module.exports = function(grunt) {
             'database': 'production',
             'host': '127.0.0.1'
           }
+        }
+      }
+    },
+    dump: {
+      testdevel: {
+        dest: 'test/dumpdevel.sql',
+        options: {
+          connection: developmentConnection
+        }
+      }
+    },
+    restore: {
+      testdevel: {
+        src: 'test/dumpdevel.sql',
+        options: {
+          connection: developmentConnection
         }
       }
     }
