@@ -9,7 +9,7 @@ var pg = require('pg'),
 var log = function (args, depth) { console.log(require('util').inspect(args, { colors: true, depth: depth })); };
 
 module.exports = function (grunt) {
-  grunt.registerMultiTask('restore', 'Dump a database using psql in your system', function () {
+  grunt.registerMultiTask('restore', 'Restore a database using psql in your system', function () {
     var done = this.async();
 
     var options = this.options({
@@ -31,6 +31,15 @@ module.exports = function (grunt) {
       }
       stdout = stdout.split('\n');
       stderr = stderr.split('\n');
+      // Pop last (ALWAYS EMPTY!) array item
+      stdout.pop();
+      stderr.pop();
+
+      if (stderr.length > 0) {
+        stderr.forEach(function (error) {
+          grunt.log.error(error);
+        });
+      }
       done();
     });
 
