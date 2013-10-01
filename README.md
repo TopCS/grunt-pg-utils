@@ -155,27 +155,32 @@ Default: `psql`
 In case `psql` utility is installed in a particular directory, put the complete path here.
 
 ### Example Gruntfile.js
+Refer to [`Gruntfile.js`][gruntfile] for extended usage example
 
 ```javascript
 module.exports = function (grunt) {
+  var dbConnection = {
+    user: 'postgres',
+    password: 'postgres',
+    database: 'dbname',
+    host: 'localhost',
+    port: 5432
+  };
 
   grunt.initConfig({
-    pgutils: {
-      connections: [{
-        "user": "postgres",
-        "password": "postgres",
-        "database": "postgres",
-        "host": "127.0.0.1"
-      },
-      {
-        "user": "postgres",
-        "password": "postgres",
-        "database": "production",
-        "host": "127.0.0.1"
-      }],
-      src: 'spsql/*.sql',
-      dest: 'spsql/',
-      spRegex: '^(sp_|fn_).*'
+    'backup-sp': {
+      dest: 'spsql/dbname/',
+      options: {
+        connection: dbConnection,
+        spRegex: '^(sp_|fn_).*',
+        filenameFormat: '{{nspace}}.{{fname}}-{{fargv}}.sql'
+      }
+    },
+    'restore-sp': {
+      src: 'spsql/dbname/*.sql',
+      options: {
+        connection: dbConnection
+      }
     },
     clean: ['spsql']
   });
@@ -185,8 +190,8 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
 
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'pgutils:backup-sp']);
-  grunt.registerTask('restore', ['pgutils:restore-sp']);
+  grunt.registerTask('default', ['clean', 'backup-sp']);
+  grunt.registerTask('restore', ['restore-sp']);
 
 };
 ```
