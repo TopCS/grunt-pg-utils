@@ -19,7 +19,7 @@ module.exports = function (grunt) {
       destinationPath;
 
     var options = this.options({
-      filenameFormat: '{{fname}}-N{{fargs}}.sql'
+      filenameFormat: '{{fname}}-{{fargv}}.sql'
     });
     // Check configuration, i don't trust the user.
     if (!options.spRegex) {
@@ -79,6 +79,7 @@ module.exports = function (grunt) {
         return grunt.fatal(err);
       }
       grunt.log.ok(S('Correctly backupped {{howmany}} stored procedures.').template({ howmany: success }));
+      pgClient.end();
       done();
     });
   });

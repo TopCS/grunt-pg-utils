@@ -62,6 +62,7 @@ module.exports = function (grunt) {
         });
       }
       grunt.log.ok(S('Correctly restored {{howmany}} stored procedures.').template({ howmany: success }));
+      pgClient.end();
       done();
     });
   });

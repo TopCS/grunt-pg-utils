@@ -1,3 +1,2 @@
-DROP DATABASE testdevel;
-DROP DATABASE teststage;
-DROP DATABASE testprodu;
+DROP DATABASE "grunt-testdevel";
+DROP DATABASE "grunt-teststage";
