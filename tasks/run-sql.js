@@ -72,7 +72,6 @@ module.exports = function (grunt) {
         }
       });
       grunt.log.ok(S('Correctly run {{howmany}} files.').template({ howmany: success }));
-      // RIEPILOGO DELLE SQL ESEGUITE QUI
       done();
     });
 
