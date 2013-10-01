@@ -169,17 +169,21 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     'backup-sp': {
-      dest: 'spsql/dbname/',
-      options: {
-        connection: dbConnection,
-        spRegex: '^(sp_|fn_).*',
-        filenameFormat: '{{nspace}}.{{fname}}-{{fargv}}.sql'
+      demotarget: {
+        dest: 'spsql/dbname/',
+        options: {
+          connection: dbConnection,
+          spRegex: '^(sp_|fn_).*',
+          filenameFormat: '{{nspace}}.{{fname}}-{{fargv}}.sql'
+        }
       }
     },
     'restore-sp': {
-      src: 'spsql/dbname/*.sql',
-      options: {
-        connection: dbConnection
+      demotarget: {
+        src: 'spsql/dbname/*.sql',
+        options: {
+          connection: dbConnection
+        }
       }
     },
     clean: ['spsql']
