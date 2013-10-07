@@ -63,7 +63,7 @@ module.exports = function (grunt) {
           // In case the SP has some description, add to the file content.
           if (sp.fdesc) {
             //escape the apex inside comments to avoid import error
-            sp.fdesc = S(sp.fdesc).replaceAll('\'', '\\\'');
+            sp.fdesc = S(sp.fdesc).replaceAll('\'', '\'\'');
             filecontent += S("COMMENT ON FUNCTION {{nspace}}.{{fname}}({{fargdesc}})\n" +
               "IS '{{fdesc}}'").template(sp);
           }
