@@ -15,12 +15,16 @@ module.exports = function (grunt) {
     var options = this.options({
       pgPath: 'pg_dump'
     });
+
+
     if (!options.connection) {
       grunt.fatal(S('connection must be specified for {{name}} task').template({ name: this.name }));
     } else if (this.files.length !== 1 || typeof this.files[0].dest  !== 'string') {
       grunt.fatal(S('{{name}} task requires only one destination file').template({ name: this.name }));
     }
     options.outputFile = this.files[0].dest;
+    // create database folder, if any
+    grunt.file.mkdir(path.dirname(options.outputFile));
 
     var pgDump = S('{{pgPath}} "user={{user}} password={{password}} host={{host}} port={{port}} dbname={{database}}" -f {{outputFile}}').template(options.connection);
     pgDump = pgDump.template(options);
