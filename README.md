@@ -1,4 +1,4 @@
-# grunt-pg-utils
+# grunt-pg-utils [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/TopCS/grunt-pg-utils/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 > Grunt tasks for version control on PostgreSql stored procedures, automatized database restore/dump, query execution.
 
