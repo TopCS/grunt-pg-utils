@@ -2,6 +2,8 @@
 
 > Grunt tasks for version control on PostgreSql stored procedures, automatized database restore/dump, query execution.
 
+**WARNING**: this project is no longer maintained by the developers, we have switched to a _way_ more stable solution: [pg_extractor](https://github.com/omniti-labs/pg_extractor)
+
 ## Getting Started
 This plugin requires Grunt `~0.4.1`
 
