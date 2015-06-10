@@ -46,8 +46,7 @@ module.exports = function (grunt) {
     });
 
     async.eachSeries(sourceArray, function (sp, callback) {
-      var executeSql = psqlRestore.s + spOutcome[sp].sourceFile;
-      grunt.log.ok("Executando comando: " + executeSql);
+      var executeSql = psqlRestore.s + spOutcome[sp].sourceFile;      
       cp.exec(executeSql, function (err, stdout, stderr) {
         console.log(executeSql, err, stdout, stderr);   
         spOutcome[sp].stdout = stdout.split('\n');
