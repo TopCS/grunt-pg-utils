@@ -1,6 +1,5 @@
 // External Deps
-var pg = require('pg'),
-    async = require('async'),
+var async = require('async'),
     cp = require('child_process'),
     S = require('string');
 // Debugging dirtyness
@@ -17,15 +16,16 @@ module.exports = function (grunt) {
     var options = this.options({
       psqlPath: 'psql'
     });
+    
     if (!options.connection) {
       grunt.fatal(S('connection must be specified for {{name}} task').template({ name: this.name }));
     }
 
     if (options.connection.database) {
-      dbName = ' dbname={{database}}';
+      dbName = '-d {{database}}';      
     }
-
-    var psqlRestore = S('{{psqlPath}} "user={{user}} password={{password}} host={{host}} port={{port}}' + dbName + '" -f {{sourceFile}}').template(options.connection);
+    process.env.PGPASSWORD = options.connection.password;
+    var psqlRestore = S('psql -U {{user}} -h {{host}} -p {{port}} ' + dbName +' -w -f ').template(options.connection);    
     psqlRestore = psqlRestore.template(options);
 
     sourceArray = sourceArray.filter(function (sourceFile) {
@@ -40,21 +40,20 @@ module.exports = function (grunt) {
     sourceArray.forEach(function (sourceFile) {
       spOutcome[sourceFile] = {
         sourceFile: sourceFile,
-        sourceCode: grunt.file.read(sourceFile),
         stdout: [],
         stderr: []
       };
     });
 
     async.eachSeries(sourceArray, function (sp, callback) {
-      var executeSql = psqlRestore.template(spOutcome[sp]);
-
+      var executeSql = psqlRestore.s + spOutcome[sp].sourceFile;      
       cp.exec(executeSql, function (err, stdout, stderr) {
+        console.log(executeSql, err, stdout, stderr);   
         spOutcome[sp].stdout = stdout.split('\n');
         spOutcome[sp].stderr = stderr.split('\n');
         // Pop last (ALWAYS EMPTY!) array item
         spOutcome[sp].stdout.pop();
-        spOutcome[sp].stderr.pop();
+        spOutcome[sp].stderr.pop();             
         callback();
       });
     },
