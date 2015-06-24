@@ -1,7 +1,7 @@
 {
   "name": "grunt-pg-utils",
   "description": "Grunt tasks for version control on PostgreSql stored procedures, and various utilities.",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "homepage": "https://github.com/TopCS/grunt-pg-utils",
   "author": {
     "name": "TopCS",
